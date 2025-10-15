@@ -64,3 +64,42 @@ Mandel::~Mandel(){
   if (_img) delete [] _img;
 }
 
+
+#include <random>
+#include <cmath>
+#include <cstdint>
+
+extern "C" double HSVolume(int d, uint64_t N, double r) {
+    std::random_device rd;
+    std::mt19937_64 gen(rd());
+    std::uniform_real_distribution<> dis(-r, r);
+
+    uint64_t inside_count = 0;
+    for (uint64_t i = 0; i < N; ++i) {
+        double dist_sq = 0.0;
+        for (int j = 0; j < d; ++j) {
+            double x = dis(gen);
+            dist_sq += x * x;
+        }
+        if (dist_sq <= r * r) inside_count++;
+    }
+
+    double cube_volume = pow(2.0 * r, d);
+    return cube_volume * ((double)inside_count / N);
+}
+
+
+extern "C" unsigned long long count3d_cpp(int n) {
+    unsigned long long count = 0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = i+1; j < n; ++j) {
+            for (int k = j+1; k < n; ++k) {
+                count += 1;
+            }
+        }
+    }
+    return count;
+}
+
+
+
